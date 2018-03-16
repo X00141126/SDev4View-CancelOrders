@@ -1,0 +1,57 @@
+@(customer: models.users.Customer, orders: List[models.shopping.ShopOrder])
+
+@main("View Orders", customer) {
+    <br>
+    @if(flash.containsKey("success")) {
+        <div class="alert alert-success">
+          @flash.get("success")
+        </div>
+      }
+    @if(flash.containsKey("error")) {
+    <div class="alert alert-danger">
+        @flash.get("error")
+    </div>
+    }
+    <br>
+    <br>
+       
+    @if(orders.isEmpty) {
+        <p>No Orders for this customer</p>
+    } else {
+        @for(o <- orders) {
+            <p>Order Number: @o.getId()</p>
+            <p>Order Date: @o.dateString()</p>
+
+            <table class="table table-bordered table-hover table-condensed">   
+                <thead>
+                    <tr>
+                    <th>ID</th>
+                    <th>Name</th>         
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>   
+                    </tr>
+                </thead>
+                @for(oi <- o.getItems()) {
+                    <tr>
+                        <td>@oi.getId</td>
+                        <td>@oi.getProduct().getName()</td>
+                        <td>@oi.getQuantity</td>
+                        <td>@oi.getPrice</td>
+                        <td>@oi.getItemTotal()</td>
+                    </tr>
+                }
+            </table>
+            <div class="container-fluid">
+                    <p style="text-align: right; font-weight: bold;">Order Total: &euro; @("%.2f".format(o.getOrderTotal))</p>
+                    <a class="btn btn-primary" href="@routes.ShoppingCtrl.cancelOrder(o.getId)" role="button">Cancel Order</a>
+                
+            </div>
+            <br>
+            <br>
+        }
+        
+
+    }
+}
+    
